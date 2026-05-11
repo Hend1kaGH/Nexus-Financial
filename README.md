@@ -38,8 +38,7 @@ Pastikan Anda sudah menginstal Node.js di sistem Anda.
 
 1. **Clone repositori ini:**
    ```bash
-   git clone https://github.com/username-anda/nama-repo-anda.git
-   cd nama-repo-anda
+   git clone https://github.com/Hend1kaGH/Nexus-Financial.git
    ```
 
 2. **Instal dependensi (Express & SQLite3):**
