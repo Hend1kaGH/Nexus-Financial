@@ -61,7 +61,7 @@ Pastikan Anda sudah menginstal Node.js di sistem Anda.
 ## 📂 Struktur Proyek
 
 ```text
-📁 my-local-api/
+📁 Nexus Financial/
 ├── 📁 public/
 │   └── 📄 index.html        # Antarmuka web pengguna (UI)
 ├── 📄 server.js             # Kode Backend Express & API
