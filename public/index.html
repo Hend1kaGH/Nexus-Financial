@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Financial - Tren Keuangan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+
+    :root {
+      --white: #ffffff;
+      --bg: #f5f7fa;
+      --border: #e4e9f0;
+      --border2: #d1d9e6;
+      --text: #1a202c;
+      --muted: #718096;
+      --light: #a0aec0;
+      --blue: #2563eb;
+      --blue-lt: #eff6ff;
+      --green: #059669;
+      --green-lt: #ecfdf5;
+      --red: #dc2626;
+      --red-lt: #fff5f5;
+      --font: 'Plus Jakarta Sans', sans-serif;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 0.45rem 0.9rem;
+      border: 1px solid transparent;
+      transition: all 0.15s;
+    }
+    .btn-outline {
+      background: var(--white);
+      color: var(--muted);
+      border-color: var(--border2);
+    }
+    .btn-outline:hover {
+      color: var(--text);
+      border-color: var(--blue-md);
+      background: var(--blue-lt);
+    }
+    .btn-red {
+      background: var(--red-lt);
+      color: var(--red);
+      border-color: var(--red-md);
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+      font-size: 0.875rem;
+      padding: 0.6rem 1.25rem;
+      border-radius: var(--radius);
+      width: 100%;
+      justify-content: center;
+    }
+    .btn-primary:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.75rem 1.5rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .sum-card {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .sum-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      margin-bottom: 0.25rem;
+    }
+    .sum-saldo .sum-icon { background: var(--blue-lt); }
+    .sum-masuk .sum-icon { background: var(--green-lt); }
+    .sum-keluar .sum-icon { background: var(--red-lt); }
+    .sum-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .sum-value {
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+    .sum-masuk .sum-value { color: var(--green); }
+    .sum-keluar .sum-value { color: var(--red); }
+    .sum-sub {
+      font-size: 0.72rem;
+      color: var(--light);
+    }
+
+    .section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-head h2 {
+      font-size: 0.875rem;
+      font-weight: 700;
+    }
+
+    .chart-wrap {
+      padding: 1rem 1.5rem 1.5rem;
+      height: 320px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .form-body {
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .field label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+    .field input, .field select {
+      width: 100%;
+      font-family: var(--font);
+      font-size: 0.875rem;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 9px;
+      padding: 0.575rem 0.875rem;
+      outline: none;
+    }
+    .field input:focus, .field select:focus {
+      border-color: var(--blue);
+      background: var(--white);
+    }
+    
+    .quick-amounts {
+      display: flex;
+      gap: 0.4rem;
+      margin-top: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .badge-btn {
+      font-family: var(--font);
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      border-radius: 6px;
+      padding: 0.3rem 0.5rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .badge-btn:hover {
+      background: var(--blue-lt);
+      color: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .tipe-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+    .tipe-btn {
+      font-family: var(--font);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.6rem;
+      border-radius: 9px;
+      cursor: pointer;
+      border: 1.5px solid var(--border2);
+      background: var(--bg);
+      text-align: center;
+    }
+    .tipe-btn.sel-masuk {
+      background: var(--green-lt);
+      color: var(--green);
+      border-color: var(--green-md);
+    }
+    .tipe-btn.sel-keluar {
+      background: var(--red-lt);
+      color: var(--red);
+      border-color: var(--red-md);
+    }
+
+    .table-scroll {
+      overflow-y: auto;
+      max-height: 400px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    thead th {
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 0.6rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+    }
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      padding: 0.18rem 0.55rem;
+      border-radius: 6px;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+    }
+    .amt {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .amt-masuk { color: var(--green); }
+    .amt-keluar { color: var(--red); }
+    .count-badge {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: var(--bg);
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      padding: 0.18rem 0.6rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 2rem;
+      color: var(--light);
+    }
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--white);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 0.7rem 1.1rem;
+      box-shadow: var(--shadow-md);
+      transform: translateY(1.5rem);
+      opacity: 0;
+      transition: 0.25s;
+      z-index: 999;
+    }
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    #toast.ok { border-left: 3px solid var(--green); }
+    #toast.err { border-left: 3px solid var(--red); }
+
+    @media (max-width: 860px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+      .summary-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div class="logo"><div class="logo-icon">🏦</div> Nexus Financial</div>
+    <div class="header-right">
+      <button class="btn btn-outline" id="btnExport">↓ Export CSV</button>
+      <button class="btn btn-red" id="btnReset">Reset DB</button>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="summary-grid">
+    <div class="card sum-card sum-saldo">
+      <div class="sum-icon">💰</div>
+      <span class="sum-label">Saldo Bersih</span>
+      <span class="sum-value" id="saldo">Rp 0</span>
+    </div>
+    <div class="card sum-card sum-masuk">
+      <div class="sum-icon">↑</div>
+      <span class="sum-label">Total Pemasukan</span>
+      <span class="sum-value" id="masuk">Rp 0</span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="sum-sub" id="countMasuk">0 transaksi</span>
+        <span class="sum-sub" id="persenMasuk"></span>
+      </div>
+    </div>
+    <div class="card sum-card sum-keluar">
+      <div class="sum-icon">↓</div>
+      <span class="sum-label">Total Pengeluaran</span>
+      <span class="sum-value" id="keluar">Rp 0</span>
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span class="sum-sub" id="countKeluar">0 transaksi</span>
+        <span class="sum-sub" id="persenKeluar"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-head"><h2>Tren Harian (30 hari terakhir)</h2></div>
+    <div class="chart-wrap"><canvas id="trendChart"></canvas></div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="card">
+      <div class="section-head"><h2>Tambah Transaksi</h2></div>
+      <div class="form-body">
+        <input type="hidden" id="tipe" value="masuk">
+        <div class="field">
+          <label>Jenis</label>
+          <div class="tipe-toggle">
+            <button class="tipe-btn sel-masuk" id="btnMasuk">▲ Pemasukan</button>
+            <button class="tipe-btn" id="btnKeluar">▼ Pengeluaran</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Jumlah (Rp)</label>
+          <input id="jumlah" type="text" inputmode="numeric" placeholder="0">
+          <div class="quick-amounts">
+            <button type="button" class="badge-btn" data-val="50000">+ 50rb</button>
+            <button type="button" class="badge-btn" data-val="100000">+ 100rb</button>
+            <button type="button" class="badge-btn" data-val="500000">+ 500rb</button>
+            <button type="button" class="badge-btn" data-val="1000000">+ 1 Juta</button>
+            <button type="button" class="badge-btn" data-val="5000000">+ 5 Juta</button>
+            <button type="button" class="badge-btn" id="btnClearJumlah" style="color: var(--red); border-color: var(--red-lt);">✕ Reset</button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Kategori</label>
+          <select id="kategori">
+            <option value="Gaji">Gaji / Usaha</option>
+            <option value="Makan">Makanan</option>
+            <option value="Transport">Transportasi</option>
+            <option value="Tagihan">Tagihan</option>
+            <option value="Belanja">Belanja</option>
+            <option value="Lainnya">Lainnya</option>
+          </select>
+        </div>
+        <div class="field"><label>Keterangan</label><input id="keterangan" type="text" placeholder="Opsional"></div>
+        <button class="btn btn-primary" id="btnSave">Simpan Transaksi</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-head">
+        <h2>Riwayat Transaksi</h2>
+        <span class="count-badge" id="jumlahData">— data</span>
+      </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Tanggal</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
+          <tbody id="tabelData"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+<div id="toast"></div>
+
+<script>
+  // Utility
+  const formatRupiah = (num) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(num);
+  let chartTrend = null;
+  let toastTimeout = null;
+
+  function showToast(msg, type = 'ok') {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = `show ${type}`;
+    if (toastTimeout) clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => toast.className = '', 3000);
+  }
+
+  // DOM elements
+  const tipeHidden = document.getElementById('tipe');
+  const btnMasuk = document.getElementById('btnMasuk');
+  const btnKeluar = document.getElementById('btnKeluar');
+  const jumlahInput = document.getElementById('jumlah');
+  const kategoriSelect = document.getElementById('kategori');
+  const keteranganInput = document.getElementById('keterangan');
+  const btnSave = document.getElementById('btnSave');
+  const btnReset = document.getElementById('btnReset');
+  const btnExport = document.getElementById('btnExport');
+
+  function setTipe(tipe) {
+    tipeHidden.value = tipe;
+    if (tipe === 'masuk') {
+      btnMasuk.classList.add('sel-masuk');
+      btnKeluar.classList.remove('sel-keluar');
+    } else {
+      btnKeluar.classList.add('sel-keluar');
+      btnMasuk.classList.remove('sel-masuk');
+    }
+  }
+
+  async function loadData() {
+    try {
+      const [dataRes, trendRes] = await Promise.all([
+        fetch('/api/data', { cache: 'no-store' }),
+        fetch('/api/trend', { cache: 'no-store' })
+      ]);
+      if (!dataRes.ok || !trendRes.ok) throw new Error('Gagal mengambil data');
+
+      const data = await dataRes.json();
+      const trend = await trendRes.json();
+
+      // Update ringkasan
+      document.getElementById('saldo').textContent = formatRupiah(data.summary.saldo);
+      document.getElementById('masuk').textContent = formatRupiah(data.summary.pemasukan);
+      document.getElementById('keluar').textContent = formatRupiah(data.summary.pengeluaran);
+
+      const transactions = data.transactions || [];
+      const jmlMasuk = transactions.filter(t => t.tipe === 'masuk').length;
+      const jmlKeluar = transactions.filter(t => t.tipe === 'keluar').length;
+      document.getElementById('countMasuk').textContent = `${jmlMasuk} transaksi`;
+      document.getElementById('countKeluar').textContent = `${jmlKeluar} transaksi`;
+      document.getElementById('jumlahData').textContent = `${transactions.length} data`;
+
+      // Tampilkan Persentase Tren Bulan Ini vs Bulan Lalu
+      if (data.comparison) {
+        const pMasuk = data.comparison.persentasePemasukan;
+        const elPMasuk = document.getElementById('persenMasuk');
+        if (pMasuk > 0) {
+          elPMasuk.innerHTML = `<span style="color: var(--green); font-weight: 600;">↑ ${pMasuk}%</span> vs bln lalu`;
+        } else if (pMasuk < 0) {
+          elPMasuk.innerHTML = `<span style="color: var(--red); font-weight: 600;">↓ ${Math.abs(pMasuk)}%</span> vs bln lalu`;
+        } else {
+          elPMasuk.innerHTML = `<span style="color: var(--muted); font-weight: 600;">0%</span> vs bln lalu`;
+        }
+
+        const pKeluar = data.comparison.persentasePengeluaran;
+        const elPKeluar = document.getElementById('persenKeluar');
+        if (pKeluar > 0) {
+          elPKeluar.innerHTML = `<span style="color: var(--red); font-weight: 600;">↑ ${pKeluar}%</span> vs bln lalu`;
+        } else if (pKeluar < 0) {
+          elPKeluar.innerHTML = `<span style="color: var(--green); font-weight: 600;">↓ ${Math.abs(pKeluar)}%</span> vs bln lalu`;
+        } else {
+          elPKeluar.innerHTML = `<span style="color: var(--muted); font-weight: 600;">0%</span> vs bln lalu`;
+        }
+      }
+
+      // Render tabel
+      const tbody = document.getElementById('tabelData');
+      if (transactions.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state">📭 Belum ada transaksi</div></td></tr>`;
+      } else {
+        tbody.innerHTML = transactions.map(t => {
+          let tgl = '-';
+          if (t.tanggal) {
+            const d = new Date(t.tanggal);
+            tgl = isNaN(d) ? t.tanggal.split(' ')[0] : d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+          }
+          const isMasuk = t.tipe === 'masuk';
+          return `<tr>
+            <td class="tgl-cell">${tgl}</td>
+            <td><span class="badge">${escapeHtml(t.kategori || 'Lainnya')}</span></td>
+            <td>${escapeHtml(t.keterangan || '-')}</td>
+            <td class="amt ${isMasuk ? 'amt-masuk' : 'amt-keluar'}">${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}</td>
+          </tr>`;
+        }).join('');
+      }
+
+      // Update CHART tren (line chart)
+      const labels = trend.map(item => item.tanggal.slice(5)); // tampilkan MM-DD agar rapi
+      const pemasukanData = trend.map(item => item.pemasukan);
+      const pengeluaranData = trend.map(item => item.pengeluaran);
+
+      if (chartTrend) chartTrend.destroy();
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      chartTrend = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Pemasukan',
+              data: pemasukanData,
+              borderColor: '#059669',
+              backgroundColor: 'rgba(5,150,105,0.05)',
+              borderWidth: 2,
+              tension: 0.2,
+              fill: true,
+              pointRadius: 3,
+              pointBackgroundColor: '#059669'
+            },
+            {
+              label: 'Pengeluaran',
+              data: pengeluaranData,
+              borderColor: '#dc2626',
+              backgroundColor: 'rgba(220,38,38,0.05)',
+              borderWidth: 2,
+              tension: 0.2,
+              fill: true,
+              pointRadius: 3,
+              pointBackgroundColor: '#dc2626'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${formatRupiah(ctx.raw)}`
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                callback: (val) => {
+                  if (val >= 1_000_000) return 'Rp ' + (val / 1_000_000).toFixed(1) + 'jt';
+                  if (val >= 1_000) return 'Rp ' + (val / 1_000).toFixed(0) + 'rb';
+                  return 'Rp ' + val;
+                }
+              }
+            }
+          }
+        }
+      });
+
+    } catch (err) {
+      showToast(err.message, 'err');
+    }
+  }
+
+  async function simpanTransaksi() {
+    const tipe = tipeHidden.value;
+    const jumlah = parseInt(jumlahInput.value.replace(/[^0-9]/g, ''));
+    if (isNaN(jumlah) || jumlah <= 0) {
+      showToast('Jumlah harus positif', 'err');
+      return;
+    }
+    btnSave.disabled = true;
+    btnSave.textContent = 'Menyimpan...';
+    try {
+      const res = await fetch('/api/transaksi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tipe,
+          jumlah,
+          kategori: kategoriSelect.value,
+          keterangan: keteranganInput.value.trim()
+        })
+      });
+      if (!res.ok) throw new Error(await res.text());
+      jumlahInput.value = '';
+      keteranganInput.value = '';
+      await loadData();
+      showToast('Transaksi tersimpan');
+    } catch (err) {
+      showToast(err.message, 'err');
+    } finally {
+      btnSave.disabled = false;
+      btnSave.textContent = 'Simpan Transaksi';
+    }
+  }
+
+  async function resetDatabase() {
+    if (!confirm('Hapus semua data? Tidak bisa dibatalkan!')) return;
+    try {
+      const res = await fetch('/api/reset', { method: 'DELETE' });
+      if (!res.ok) throw new Error();
+      await loadData();
+      showToast('Database direset', 'ok');
+    } catch {
+      showToast('Gagal reset', 'err');
+    }
+  }
+
+  function exportCSV() { window.location.href = '/api/export'; }
+  function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+
+  // Event listener untuk otomatis memberi format titik pada field jumlah
+  jumlahInput.addEventListener('input', function(e) {
+    let value = this.value.replace(/[^0-9]/g, ''); // Hapus semua selain angka
+    if (value) {
+      this.value = new Intl.NumberFormat('id-ID').format(value);
+    } else {
+      this.value = '';
+    }
+  });
+
+  // Event listener untuk tombol nominal cepat (UMR, dll)
+  document.querySelectorAll('.badge-btn[data-val]').forEach(btn => {
+    btn.addEventListener('click', function() {
+      // Ambil angka saat ini dari input (kalau kosong jadikan 0)
+      const currentVal = parseInt(jumlahInput.value.replace(/[^0-9]/g, '')) || 0;
+      // Ambil nilai dari tombol yang diklik
+      const addVal = parseInt(this.getAttribute('data-val')) || 0;
+      // Tambahkan dan format kembali ke rupiah
+      jumlahInput.value = new Intl.NumberFormat('id-ID').format(currentVal + addVal);
+    });
+  });
+
+  // Event listener untuk tombol reset nominal
+  document.getElementById('btnClearJumlah').addEventListener('click', () => {
+    jumlahInput.value = '';
+  });
+
+  btnMasuk.addEventListener('click', () => setTipe('masuk'));
+  btnKeluar.addEventListener('click', () => setTipe('keluar'));
+  btnSave.addEventListener('click', simpanTransaksi);
+  btnReset.addEventListener('click', resetDatabase);
+  btnExport.addEventListener('click', exportCSV);
+
+  loadData();
+</script>
+</body>
+</html>
