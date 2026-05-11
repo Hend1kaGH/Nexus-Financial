@@ -1,8 +1,8 @@
-# 🏦 Nexus Financial
+# Nexus Financial
 
 Nexus Financial adalah aplikasi pencatatan arus kas (pemasukan & pengeluaran) lokal berbasis Web. Dibangun menggunakan antarmuka yang bersih (bersifat *Single Page Application* sederhana) serta *backend* yang ringan menggunakan Node.js dan SQLite, aplikasi ini cocok digunakan untuk mencatat keuangan pribadi maupun usaha kecil.
 
-## ✨ Fitur Utama
+## Fitur Utama
 
 - **Dashboard Informatif**: Menampilkan Ringkasan Saldo Bersih, Total Pemasukan, dan Total Pengeluaran beserta indikator persentase kenaikan/penurunan (dibandingkan bulan lalu).
 - **Grafik Tren Harian**: Visualisasi interaktif riwayat transaksi selama 30 hari terakhir menggunakan **Chart.js**.
@@ -15,7 +15,7 @@ Nexus Financial adalah aplikasi pencatatan arus kas (pemasukan & pengeluaran) lo
 
 ---
 
-## 💻 Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 **Frontend:**
 - HTML5 & CSS3 (Variabel CSS & Flexbox/Grid Layout)
@@ -29,7 +29,7 @@ Nexus Financial adalah aplikasi pencatatan arus kas (pemasukan & pengeluaran) lo
 
 ---
 
-## 🚀 Cara Instalasi & Menjalankan Aplikasi
+## Cara Instalasi & Menjalankan Aplikasi
 
 ### Prasyarat
 Pastikan Anda sudah menginstal Node.js di sistem Anda.
